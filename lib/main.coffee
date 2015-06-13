@@ -1,16 +1,21 @@
 {CompositeDisposable} = require 'atom'
 
 module.exports =
+  direction: null
   activate: (state) ->
     @disposables = new CompositeDisposable
     @disposables.add atom.commands.add 'atom-workspace',
-      'select-scope:next-string': => @nextScope('.string.quoted')
-      'select-scope:prev-string': => @prevScope('.string.quoted')
-      # 'select-scope:next-string': => @nextScope('.entity.name.function')
-      # 'select-scope:next-string': => @nextScope('.variable.other.readwrite.instance')
+      'goto-scope:next': => @next()
+      'goto-scope:prev': => @prev()
 
-  bufferRangeForScopeAtCursor: (scopeSelector) ->
-    @displayBuffer.bufferRangeForScopeAtPosition(scopeSelector, @getCursorBufferPosition())
+      'goto-scope:dump': => @dump()
+
+      'goto-scope:repeat-next': => @repeat('next')
+      'goto-scope:repeat-prev': => @repeat('prev')
+
+      'goto-scope:goto-string':   => @goToScope('.string.quoted')
+      'goto-scope:goto-function': => @goToScope('.entity.name.function')
+      'goto-scope:goto-variable': => @goToScope('.variable.other.readwrite.instance')
 
   getNextPositionForScope: (scope, options = {}) ->
     start = @getBufferPosition()
@@ -40,25 +45,43 @@ module.exports =
         stop()
     nextPosition
 
+  setup: (@direction) ->
+    editor = @getEditor()
+    @editorElement = atom.views.getView(editor)
+    @editorElement.classList.add('goto-scope')
+
+  repeat: (@direction) ->
+    return unless @lastScope
+    @setup @direction
+    @goToScope @lastScope
+
+  dump: ->
+    console.log @direction
+
+  next: ->
+    @setup('next')
+
+  prev: ->
+    @setup('prev')
 
   getEditor: ->
     atom.workspace.getActiveTextEditor()
 
-  nextScope: (scope) ->
-    @goToScope('next', scope)
+  reset: ->
+    @editorElement.classList.remove('goto-scope')
 
-  prevScope: (scope) ->
-    @goToScope('prev', scope)
-
-  goToScope: (direction, scope) ->
+  goToScope: (scope) ->
+    @lastScope = scope
+    @lastDirection = @direction
     editor = @getEditor()
     cursor = editor.getLastCursor()
 
     find =
-      if direction is 'next'
+      if @direction is 'next'
         @getNextPositionForScope.bind(cursor)
-      else if direction is 'prev'
+      else if @direction is 'prev'
         @getPreviousPositionForScope.bind(cursor)
 
     if point = find(scope)
       cursor.setBufferPosition(point)
+    @reset()
