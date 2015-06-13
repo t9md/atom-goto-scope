@@ -9,6 +9,7 @@ No keymap by default.
 # Feature
 
 * Move cursor to `scope` position quickly
+* User can add custom command.
 
 # Commands
 
@@ -35,12 +36,30 @@ No keymap by default.
 
 ```coffeescript
 'atom-text-editor.vim-mode.command-mode':
-  's':   'goto-scope:string-next',
-  'S':   'goto-scope:string-prev',
+  's': 'goto-scope:string-next',
+  'S': 'goto-scope:string-prev',
   ')': 'goto-scope:function-next',
   '(': 'goto-scope:function-prev',
-  '@':   'goto-scope:variable-next',
+  '@': 'goto-scope:variable-next',
+```
+
+# Extend
+
+1. Determine exact scope name using `editor:log-cursor-scope` from command palette.
+2. Then add your custom command in `init.coffee`.
+
+In following example, define custom goto command that let you goto `new` keyword.
+
+```coffeescript
+# In your init.coffee
+atom.packages.onDidActivatePackage (pack) ->
+  if pack.name is 'goto-scope'
+    gotoScope = pack.mainModule.provideGotoScope()
+
+    atom.commands.add 'atom-text-editor',
+      'user-goto-scope:new-next': -> gotoScope('next', '.keyword.operator.new')
 ```
 
 # TODO
-* [ ] Configurable scope selector?
+* [x] Configurable scope selector.
+* [ ] Repeat command.

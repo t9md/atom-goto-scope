@@ -6,12 +6,12 @@ module.exports =
   activate: ->
     @disposables = new CompositeDisposable
     @disposables.add atom.commands.add 'atom-workspace',
-      'goto-scope:string-next':   => @goToScope('next', '.string.quoted')
-      'goto-scope:string-prev':   => @goToScope('prev', '.string.quoted')
-      'goto-scope:function-next': => @goToScope('next', '.entity.name.function')
-      'goto-scope:function-prev': => @goToScope('prev', '.entity.name.function')
-      'goto-scope:variable-next': => @goToScope('next', '.variable')
-      'goto-scope:variable-prev': => @goToScope('prev', '.variable')
+      'goto-scope:string-next':   => @gotoScope('next', '.string.quoted')
+      'goto-scope:string-prev':   => @gotoScope('prev', '.string.quoted')
+      'goto-scope:function-next': => @gotoScope('next', '.entity.name.function')
+      'goto-scope:function-prev': => @gotoScope('prev', '.entity.name.function')
+      'goto-scope:variable-next': => @gotoScope('next', '.variable')
+      'goto-scope:variable-prev': => @gotoScope('prev', '.variable')
 
   deactivate: ->
     @disposables?.dispose()
@@ -50,7 +50,7 @@ module.exports =
   getEditor: ->
     atom.workspace.getActiveTextEditor()
 
-  goToScope: (direction, scope) ->
+  gotoScope: (direction, scope) ->
     return unless editor = @getEditor()
 
     cursor = editor.getLastCursor()
@@ -58,3 +58,6 @@ module.exports =
 
     if point = find(direction)
       cursor.setBufferPosition(point)
+
+  provideGotoScope: ->
+    @gotoScope.bind(this)
