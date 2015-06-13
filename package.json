@@ -1,0 +1,13 @@
+{
+  "name": "goto-scope",
+  "main": "./lib/main",
+  "version": "0.0.0",
+  "description": "quickly go to `scope` position",
+  "repository": "https://github.com/t9md/goto-scope",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}
