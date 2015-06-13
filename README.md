@@ -34,8 +34,8 @@ Quickly go to `scope` position.
 'atom-text-editor.vim-mode.command-mode':
   's': 'goto-scope:string-next',
   'S': 'goto-scope:string-prev',
-  ')': 'goto-scope:function-next',
-  '(': 'goto-scope:function-prev',
+  ')': 'user-goto-scope:function-next', # custom-command see Extend section
+  '(': 'user-goto-scope:function-prev', # custom-command see Extend section
   '@': 'goto-scope:variable-next',
 ```
 
