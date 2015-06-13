@@ -16,7 +16,7 @@ module.exports =
   deactivate: ->
     @disposables?.dispose()
 
-  getFinderForScope: (cursor, scope, options = {}) ->
+  getFinderForScope: (cursor, scopes) ->
     finder = (direction) ->
       if direction is 'next'
         options =
@@ -30,16 +30,21 @@ module.exports =
           finder:          'backwardsScanInBufferRange'
 
       start = @getBufferPosition()
-      if currentRange = @editor.bufferRangeForScopeAtCursor(scope)
-        start = currentRange[options.startRangePoint]
+
+      for scope in scopes
+        if currentRange = @editor.bufferRangeForScopeAtCursor(scope)
+          start = currentRange[options.startRangePoint]
+          break
 
       scanRange = [start, options.scanRangeEND]
 
       nextPosition = null
-      @editor[options.finder] (options.wordRegex ? @wordRegExp()), scanRange, ({range, stop}) =>
-        if nextRange = @editor.displayBuffer.bufferRangeForScopeAtPosition(scope, range.start)
-          nextPosition = nextRange.start
-          stop()
+      @editor[options.finder] @wordRegExp(), scanRange, ({range, stop}) =>
+        for scope in scopes
+          if nextRange = @editor.displayBuffer.bufferRangeForScopeAtPosition(scope, range.start)
+            nextPosition = nextRange.start
+            stop()
+            break
       nextPosition
 
     finder.bind(cursor)
@@ -50,11 +55,11 @@ module.exports =
   getEditor: ->
     atom.workspace.getActiveTextEditor()
 
-  gotoScope: (direction, scope) ->
+  gotoScope: (direction, scopes...) ->
     return unless editor = @getEditor()
 
     cursor = editor.getLastCursor()
-    find   = @getFinderForScope(cursor, scope)
+    find   = @getFinderForScope(cursor, scopes)
 
     if point = find(direction)
       cursor.setBufferPosition(point)

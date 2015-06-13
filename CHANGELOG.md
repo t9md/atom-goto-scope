@@ -1,3 +1,6 @@
+## 0.1.3 - Enhance
+- Multiple scope argument to @gotoScope(), treated as 'OR' condition.
+
 ## 0.1.2 - Doc
 - Revise doc
 

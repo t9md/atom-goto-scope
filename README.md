@@ -44,7 +44,6 @@ Quickly go to `scope` position.
 1. Determine exact scope name using `editor:log-cursor-scope` from command palette.
 2. Then add your custom command in `init.coffee`.
 
-In following example, define custom goto command that let you goto `new` keyword.
 
 ```coffeescript
 # In your init.coffee
@@ -53,7 +52,14 @@ atom.packages.onDidActivatePackage (pack) ->
     gotoScope = pack.mainModule.provideGotoScope()
 
     atom.commands.add 'atom-text-editor',
+      # define custom command to goto `new` keyword.
       'user-goto-scope:new-next': -> gotoScope('next', '.keyword.operator.new')
+      'user-goto-scope:new-prev': -> gotoScope('prev', '.keyword.operator.new')
+
+      # You can pass multiple scope, treated as 'OR' condition.
+      # define custom command to goto function or function argument.
+      'user-goto-scope:function-next': -> gotoScope('next', '.entity.name.function', 'variable.parameter')
+      'user-goto-scope:function-prev': -> gotoScope('prev', '.entity.name.function', 'variable.parameter')
 ```
 
 # TODO
