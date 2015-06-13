@@ -2,10 +2,6 @@
 
 Quickly go to `scope` position.
 
-# Keymap
-
-No keymap by default.
-
 # Feature
 
 * Move cursor to `scope` position quickly
