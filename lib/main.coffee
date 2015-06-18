@@ -21,12 +21,12 @@ module.exports =
       if direction is 'next'
         options =
           startRangePoint: 'end'
-          scanRangeEND:    @editor.getEofBufferPosition()
+          scanRangeEnd:    @editor.getEofBufferPosition()
           finder:          'scanInBufferRange'
       else if 'prev'
         options =
           startRangePoint: 'start'
-          scanRangeEND:    [0, 0]
+          scanRangeEnd:    [0, 0]
           finder:          'backwardsScanInBufferRange'
 
       start = @getBufferPosition()
@@ -36,7 +36,7 @@ module.exports =
           start = currentRange[options.startRangePoint]
           break
 
-      scanRange = [start, options.scanRangeEND]
+      scanRange = [start, options.scanRangeEnd]
 
       nextPosition = null
       @editor[options.finder] @wordRegExp(), scanRange, ({range, stop}) =>
