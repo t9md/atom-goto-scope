@@ -6,6 +6,7 @@ Quickly go to `scope` position.
 
 * Move cursor to `scope` position quickly
 * User can add custom command.
+* Configurable offset to set cursor position with offset.
 
 # Commands
 
@@ -64,4 +65,5 @@ atom.packages.onDidActivatePackage (pack) ->
 
 # TODO
 * [x] Configurable scope selector.
+* [x] Per scope type offset setting.
 * [ ] Repeat command.
