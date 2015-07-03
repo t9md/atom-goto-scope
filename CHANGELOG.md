@@ -1,4 +1,7 @@
-## [PRE] 0.2.0 - Breaking change
+## 0.2.1 - Breaking change
+- [COSMETIC] repository link was broken
+
+## 0.2.0 - Breaking change
 - Rename variable name for consistencies
 - Add offset configure option.
 - User custom command no longer supported.
