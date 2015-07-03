@@ -1,3 +1,6 @@
+## 0.2.3 - FIX
+- [FIX] Infinite loop when setting offset.
+
 ## 0.2.2 - NOPE
 - Release simply because of atom.io link seem to dead.
 

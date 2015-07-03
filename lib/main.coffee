@@ -77,7 +77,7 @@ module.exports =
 
     orgPosition = cursor.getBufferPosition()
     @gotoPoint editor, point.translate([0, offset])
-    return if options.retry
+    return if retry
 
     # Locked to same position, retry without offset.
     if orgPosition.isEqual cursor.getBufferPosition()
@@ -132,7 +132,6 @@ module.exports =
       * Remove custome command and keymap from `init.coffee` and `keymap.cson`.
       """
     atom.notifications.addWarning content, dismissable: true
-    
     ->
 
   dump: ->
