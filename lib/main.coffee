@@ -29,27 +29,63 @@ Config =
     minimum: 0
 
 module.exports =
+  prefix: 'goto-scope'
   config: Config
   subscriptions: null
-  prefix: 'goto-scope'
   type2scope: null
 
   activate: ->
     @subscriptions = new CompositeDisposable
-    types = [ "string", "function", "variable", "keyword", "constant"]
+    types = ['string', 'function', 'variable', 'keyword', 'constant']
     commands = {}
 
     for type in types
       do (type) =>
         commands["#{@prefix}:#{type}-next"] = => @gotoScope('next', {type})
         commands["#{@prefix}:#{type}-prev"] = => @gotoScope('prev', {type})
-    commands["#{@prefix}:dump"] = => @dump()
     @subscriptions.add atom.commands.add 'atom-workspace', commands
 
   deactivate: ->
     @subscriptions?.dispose()
 
-  getScanStartPosition: (direction, scopes) ->
+
+  gotoPoint: (editor, point) ->
+    if (editor.getSelections().length is 1) and (not editor.getLastSelection().isEmpty())
+      editor.selectToBufferPosition point
+    else
+      editor.setCursorBufferPosition point
+
+  gotoScope: (direction, options, retry=false) ->
+    return unless editor = @getEditor()
+    @type2scope ?= require './type2scope'
+
+    {type} = options
+    unless options.scope
+      scopeName = editor.getRootScopeDescriptor().toString()
+      options.scope = (@type2scope[scopeName]?[type] or @type2scope['*'][type])
+
+    cursor = editor.getLastCursor()
+    methodName = 'find' + _.capitalize direction
+    point = this[methodName](editor, options.scope)
+    return unless point
+
+    offset = null
+    offset = @getOffset(type) if type
+    unless offset
+      @gotoPoint editor, point
+      return
+
+    orgPosition = cursor.getBufferPosition()
+    @gotoPoint editor, point.translate([0, offset])
+    return if options.retry
+
+    # Locked to same position, retry without offset.
+    if orgPosition.isEqual cursor.getBufferPosition()
+      @gotoPoint editor, point.translate([0, -offset])
+      # cursor.setBufferPosition(point.translate([0, -offset]))
+      @gotoScope direction, options, true
+
+  getScanStartPosition: (editor, direction, scopes) ->
     start = editor.getCursorBufferPosition()
     for scope in scopes
       if currentRange = editor.bufferRangeForScopeAtCursor(scope)
@@ -60,49 +96,40 @@ module.exports =
         break
     start
 
-  scanInBufferRange: (editor, scanRange, direction)->
-    methodName = if direction is 'next'
-    else
-
-    wordRegExp = editor.getLastCursor().wordRegExp()
-    editor.backwardsScanInBufferRange wordRegExp, [scanStart, scanEnd], ({range, stop}) =>
-      for scope in scopes
-        if nextRange = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, range.start)
-          nextPosition = nextRange.start
-          stop()
-          break
-    nextPosition
-
-
   findNext: (editor, scopes) ->
     scopes     = [scopes] unless _.isArray(scopes)
-    scanStart  = @getScanStartPosition('next', scopes)
-    scanEnd    = editor.getEofBufferPosition()]
-    wordRegExp = editor.getLastCursor().wordRegExp()
-
-    nextPosition = null
-    editor.scanInBufferRange wordRegExp, [scanStart, scanEnd], ({range, stop}) =>
-      for scope in scopes
-        if nextRange = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, range.start)
-          nextPosition = nextRange.start
-          stop()
-          break
-    nextPosition
+    scanStart  = @getScanStartPosition(editor, 'next', scopes)
+    scanEnd    = editor.getEofBufferPosition()
+    @findPosition editor, 'next', [scanStart, scanEnd], scopes
 
   findPrev: (editor, scopes) ->
     scopes = [scopes] unless _.isArray(scopes)
-    scanStart  = @getScanStartPosition('prev', scopes)
+    scanStart  = @getScanStartPosition(editor, 'prev', scopes)
     scanEnd    = [0, 0]
-    wordRegExp = editor.getLastCursor().wordRegExp()
+    @findPosition editor, 'prev', [scanStart, scanEnd], scopes
 
-    nextPosition = null
-    editor.backwardsScanInBufferRange wordRegExp, [scanStart, scanEnd], ({range, stop}) =>
+  findPosition: (editor, direction, scanRange, scopes) ->
+    methodName = if direction is 'next'
+      'scanInBufferRange'
+    else
+      'backwardsScanInBufferRange'
+
+    wordRegExp = editor.getLastCursor().wordRegExp()
+    point = null
+    editor[methodName] wordRegExp, scanRange, ({range, stop}) =>
       for scope in scopes
         if nextRange = editor.displayBuffer.bufferRangeForScopeAtPosition(scope, range.start)
-          nextPosition = nextRange.start
+          point = nextRange.start
           stop()
           break
-    nextPosition
+    point
+
+  # getIndentLevel: (row) ->
+  #   editor = @getEditor()
+  #   editor.indentationForBufferRow(row)
+
+  provideGotoScope: ->
+    @gotoScope.bind(this)
 
   dump: ->
     console.log @direction
@@ -112,36 +139,3 @@ module.exports =
 
   getOffset: (type) ->
     atom.config.get "goto-scope.offset#{_.capitalize(type)}"
-
-  dump: ->
-    # console.log
-
-  gotoScope: (direction, options) ->
-    return unless editor = @getEditor()
-    @type2scope ?= require './type2scope'
-
-    {type} = options
-    offset = @getOffset type
-    unless options.scope
-      scopeName = editor.getRootScopeDescriptor().toString()
-      options.scope = (@type2scope[scopeName]?[type] or @type2scope['*'][type])
-
-    cursor = editor.getLastCursor()
-    orgPosition = cursor.getBufferPosition()
-
-    methodName = 'find' + _.capitalize direction
-    return unless point = this[methodName](editor, options.scope)
-
-    if offset
-      cursor.setBufferPosition(point.translate([0, offset]))
-      return if options.retry
-      # Locked to same position because of offset
-      # Retry after adjusting offset.
-      if orgPosition.isEqual cursor.getBufferPosition()
-        cursor.setBufferPosition(point.translate([0, -offset]))
-        @gotoScope direction, scope, _.extend(options, retry: true)
-    else
-      cursor.setBufferPosition(point)
-
-  provideGotoScope: ->
-    @gotoScope.bind(this)

@@ -1,6 +1,7 @@
-## [PRE] 0.1.4 - Improve
+## [PRE] 0.2.0 - Breaking change
 - Rename variable name for consistencies
 - Add offset configure option.
+- User custom command no longer supported.
 
 ## 0.1.3 - Enhance
 - Multiple scope argument to @gotoScope(), treated as 'OR' condition.
