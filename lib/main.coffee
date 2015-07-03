@@ -129,7 +129,14 @@ module.exports =
   #   editor.indentationForBufferRow(row)
 
   provideGotoScope: ->
-    @gotoScope.bind(this)
+    content = """
+      *#{@prefix}*
+      * Custom command feature deleted from v0.2.0.
+      * If you have probrem, report issue
+      * Remove custome command and keymap from `init.coffee` and `keymap.cson`.
+      """
+    atom.notifications.addWarning content, dismissable: true
+    ->
 
   dump: ->
     console.log @direction
