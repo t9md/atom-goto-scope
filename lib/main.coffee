@@ -124,10 +124,6 @@ module.exports =
           break
     point
 
-  # getIndentLevel: (row) ->
-  #   editor = @getEditor()
-  #   editor.indentationForBufferRow(row)
-
   provideGotoScope: ->
     content = """
       *#{@prefix}*
@@ -136,6 +132,7 @@ module.exports =
       * Remove custome command and keymap from `init.coffee` and `keymap.cson`.
       """
     atom.notifications.addWarning content, dismissable: true
+    
     ->
 
   dump: ->
