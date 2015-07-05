@@ -66,4 +66,4 @@ So [report issue](https://github.com/t9md/atom-goto-scope/issues/1) for your lan
 * [ ] Improve [type2scope] file
 * [ ] Repeat command
 
-[type2scope]: [https://github.com/t9md/atom-goto-scope/blob/master/lib/type2scope.coffee]
+[type2scope]:[https://github.com/t9md/atom-goto-scope/blob/master/lib/type2scope.coffee]
