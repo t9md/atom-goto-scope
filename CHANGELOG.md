@@ -1,3 +1,4 @@
+## 0.2.6 - Re-publish to fix atom.io web page issue.
 ## 0.2.5 - Add `activationCommands`.
 ## 0.2.4 - FIX
 ## 0.2.3 - FIX
