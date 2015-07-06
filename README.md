@@ -10,23 +10,23 @@ Quickly go to `scope` position.
 
 # Commands
 
-string
+## string
 * `goto-scope:string-next`
 * `goto-scope:string-prev`
 
-function
+## function
 * `goto-scope:function-next`
 * `goto-scope:function-prev`
 
-variable
+## variable
 * `goto-scope:variable-next`
 * `goto-scope:variable-prev`
 
-keyword
+## keyword
 * `goto-scope:keyword-next`
 * `goto-scope:keyword-prev`
 
-constant
+## constant
 * `goto-scope:constant-next`
 * `goto-scope:constant-prev`
 
@@ -56,7 +56,8 @@ constant
 
 # Improve language coverage
 
-[type2scope] define, mapping from `type` to actual `scope` used in search.  
+[type2scope](https://github.com/t9md/atom-goto-scope/blob/master/lib/type2scope.coffee)
+ define, mapping from `type` to actual `scope` used in search.  
 Adding new scope is very trivial.
 So [report issue](https://github.com/t9md/atom-goto-scope/issues/1) for your language.
 
@@ -65,5 +66,3 @@ So [report issue](https://github.com/t9md/atom-goto-scope/issues/1) for your lan
 * [x] Per scope offset setting
 * [ ] Improve [type2scope] file
 * [ ] Repeat command
-
-[type2scope]:[https://github.com/t9md/atom-goto-scope/blob/master/lib/type2scope.coffee]
