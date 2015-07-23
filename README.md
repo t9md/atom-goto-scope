@@ -43,7 +43,7 @@ Quickly go to `scope` position.
 * Mine.
 
 ```coffeescript
-'atom-text-editor.vim-mode.command-mode':
+'atom-text-editor.vim-mode.normal-mode':
   's': 'goto-scope:string-next',
   'S': 'goto-scope:string-prev',
   ')': 'goto-scope:function-next',

@@ -1,3 +1,6 @@
+## 0.2.9 - Doc
+- Update readme to follow vim-mode's rename from command-mode to normal-mode
+
 ## 0.2.8 - Don't use reference style link for atom.io?
 ## 0.2.7 - Still page didn't shown.
 ## 0.2.6 - Re-publish to fix atom.io web page issue.
