@@ -1,3 +1,8 @@
+# Not maintained
+
+Once published on atom.io.
+But now unpublished at 2016.05.16.
+
 # goto-scope
 
 Quickly go to `scope` position.
